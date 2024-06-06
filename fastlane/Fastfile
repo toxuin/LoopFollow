@@ -88,7 +88,8 @@ platform :ios do
       output_name: "LoopFollow.ipa",
       configuration: "Release",
       destination: 'generic/platform=iOS',
-      buildlog_path: 'buildlog'
+      buildlog_path: 'buildlog',
+      include_symbols: true
     )
 
     copy_artifacts(
