@@ -83,10 +83,10 @@ platform :ios do
     )
 
     gym(
-      export_method: "development",  # Changed from "app-store" to "development"
+      export_method: "app-store",
       scheme: "LoopFollow",
       output_name: "LoopFollow.ipa",
-      configuration: "Debug",  # Changed from "Release" to "Debug"
+      configuration: "Release",
       destination: 'generic/platform=iOS',
       buildlog_path: 'buildlog'
     )
@@ -148,7 +148,7 @@ platform :ios do
     )
     
     match(
-      type: "development",
+      type: "appstore",
       force: true,
       git_basic_authorization: Base64.strict_encode64("#{GITHUB_REPOSITORY_OWNER}:#{GH_PAT}"),
       app_identifier: [
@@ -175,7 +175,7 @@ platform :ios do
     find_bundle_id("com.#{TEAMID}.loopkit.LoopFollow")
 
     match(
-      type: "development",
+      type: "appstore",
       git_basic_authorization: Base64.strict_encode64("#{GITHUB_REPOSITORY_OWNER}:#{GH_PAT}"),
       app_identifier: [],
     )
@@ -193,7 +193,7 @@ platform :ios do
     )
     
     match_nuke(
-      type: "development",
+      type: "appstore",
       team_id: "#{TEAMID}",
       skip_confirmation: true,
       git_basic_authorization: Base64.strict_encode64("#{GITHUB_REPOSITORY_OWNER}:#{GH_PAT}")
