@@ -82,12 +82,13 @@ platform :ios do
     )
 
     gym(
-      export_method: "development",  # Changed from "app-store" to "development"
+      export_method: "development",
       scheme: "LoopFollow",
       output_name: "LoopFollow.ipa",
-      configuration: "Debug",  # Changed from "Release" to "Debug"
+      configuration: "Debug",
       destination: 'generic/platform=iOS',
-      buildlog_path: 'buildlog'
+      buildlog_path: 'buildlog',
+      export_xcargs: "-allowProvisioningUpdates"
     )
 
     copy_artifacts(
