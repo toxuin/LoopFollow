@@ -106,7 +106,7 @@ class UserDefaultsRepository {
     static let graphBasal = UserDefaultsValue<Bool>(key: "graphBasal", default: true)
     static let graphBolus = UserDefaultsValue<Bool>(key: "graphBolus", default: true)
     static let graphCarbs = UserDefaultsValue<Bool>(key: "graphCarbs", default: true)
-    static let debugLog = UserDefaultsValue<Bool>(key: "debugLog", default: false)
+    static let debugLog = UserDefaultsValue<Bool>(key: "debugLog", default: true)
     static let alwaysDownloadAllBG = UserDefaultsValue<Bool>(key: "alwaysDownloadAllBG", default: true)
     static let bgUpdateDelay = UserDefaultsValue<Int>(key: "bgUpdateDelay", default: 10)
     static let downloadDays = UserDefaultsValue<Int>(key: "downloadDays", default: 1)
