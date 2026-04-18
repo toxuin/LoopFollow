@@ -100,7 +100,7 @@ extension MainViewController {
         }
 
         // Process the current data first
-        let lastDeviceStatus = jsonDeviceStatus[0] as [String: AnyObject]?
+        let lastDeviceStatus = jsonDeviceStatus[0]
 
         // pump and uploader
         let formatter = ISO8601DateFormatter()
@@ -108,10 +108,23 @@ extension MainViewController {
                                    .withTime,
                                    .withDashSeparatorInDate,
                                    .withColonSeparatorInTime]
-
         Observable.shared.previousAlertLastLoopTime.value = Observable.shared.alertLastLoopTime.value
 
-        if let lastPumpRecord = lastDeviceStatus?["pump"] as! [String: AnyObject]? {
+        let updateBatteryDisplay: (_ batteryLevel: Double, _ timestamp: Date, _ isCharging: Bool) -> Void = { batteryLevel, timestamp, isCharging in
+            let batteryText = isCharging ? "⚡️ " + String(format: "%.0f", batteryLevel) + "%" : String(format: "%.0f", batteryLevel) + "%"
+            self.infoManager.updateInfoData(type: .battery, value: batteryText)
+            Observable.shared.deviceBatteryLevel.value = batteryLevel
+
+            let currentBattery = DataStructs.batteryStruct(batteryLevel: batteryLevel, timestamp: timestamp)
+            self.deviceBatteryData.append(currentBattery)
+
+            // store only the last 30 battery readings
+            if self.deviceBatteryData.count > 30 {
+                self.deviceBatteryData.removeFirst()
+            }
+        }
+
+        if let lastPumpRecord = lastDeviceStatus["pump"] as? [String: AnyObject] {
             if let bolusIncrement = lastPumpRecord["bolusIncrement"] as? Double, bolusIncrement > 0 {
                 Storage.shared.bolusIncrement.value = HKQuantity(unit: .internationalUnit(), doubleValue: bolusIncrement)
                 Storage.shared.bolusIncrementDetected.value = true
@@ -149,37 +162,23 @@ extension MainViewController {
                 infoManager.updateInfoData(type: .pumpBattery, value: String(format: "%.0f", pumpBatteryPercent) + "%")
                 Observable.shared.pumpBatteryLevel.value = pumpBatteryPercent
             }
+        }
 
-            if let uploader = lastDeviceStatus?["uploader"] as? [String: AnyObject],
-               let upbat = uploader["battery"] as? Double
-            {
-                let batteryText: String
-                if let isCharging = uploader["isCharging"] as? Bool, isCharging {
-                    batteryText = "⚡️ " + String(format: "%.0f", upbat) + "%"
-                } else {
-                    batteryText = String(format: "%.0f", upbat) + "%"
-                }
-                infoManager.updateInfoData(type: .battery, value: batteryText)
-                Observable.shared.deviceBatteryLevel.value = upbat
-
-                let timestamp = uploader["timestamp"] as? Date ?? Date()
-                let currentBattery = DataStructs.batteryStruct(batteryLevel: upbat, timestamp: timestamp)
-                deviceBatteryData.append(currentBattery)
-
-                // store only the last 30 battery readings
-                if deviceBatteryData.count > 30 {
-                    deviceBatteryData.removeFirst()
-                }
-            }
+        if let uploader = lastDeviceStatus["uploader"] as? [String: AnyObject],
+           let batteryLevel = uploader["battery"] as? Double
+        {
+            updateBatteryDisplay(batteryLevel, uploader["timestamp"] as? Date ?? Date(), uploader["isCharging"] as? Bool ?? false)
+        } else if let batteryLevel = lastDeviceStatus["uploaderBattery"] as? Double {
+            updateBatteryDisplay(batteryLevel, Date(), false)
         }
 
         // Loop - handle new data
-        if let lastLoopRecord = lastDeviceStatus?["loop"] as! [String: AnyObject]? {
+        if let lastLoopRecord = lastDeviceStatus["loop"] as? [String: AnyObject] {
             DeviceStatusLoop(formatter: formatter, lastLoopRecord: lastLoopRecord)
 
             var oText = ""
             currentOverride = 1.0
-            if let lastOverride = lastDeviceStatus?["override"] as? [String: AnyObject],
+            if let lastOverride = lastDeviceStatus["override"] as? [String: AnyObject],
                let isActive = lastOverride["active"] as? Bool, isActive
             {
                 if let lastCorrection = lastOverride["currentCorrectionRange"] as? [String: AnyObject],
@@ -204,7 +203,7 @@ extension MainViewController {
         }
 
         // OpenAPS - handle new data
-        if let lastLoopRecord = lastDeviceStatus?["openaps"] as! [String: AnyObject]? {
+        if let lastLoopRecord = lastDeviceStatus["openaps"] as? [String: AnyObject] {
             DeviceStatusOpenAPS(formatter: formatter, lastDeviceStatus: lastDeviceStatus, lastLoopRecord: lastLoopRecord)
         }
 
