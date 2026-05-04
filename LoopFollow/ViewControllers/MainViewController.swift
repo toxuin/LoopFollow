@@ -436,9 +436,9 @@ class MainViewController: UIViewController, UITableViewDataSource, ChartViewDele
                     (currentRemoteType == .trc && !isTrioDevice) ||
                     (currentRemoteType == .nightscout && !isTrioDevice)
 
-                if shouldReset {
-                    Storage.shared.remoteType.value = .none
-                }
+//                if shouldReset {
+//                    Storage.shared.remoteType.value = .none
+//                }
             }
             .store(in: &cancellables)
 

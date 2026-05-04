@@ -43,19 +43,19 @@ struct RemoteSettingsView: View {
                 remoteTypeRow(
                     type: .loopAPNS,
                     label: "Loop Remote Control",
-                    isEnabled: viewModel.isLoopDevice
+                    isEnabled: true
                 )
 
                 remoteTypeRow(
                     type: .trc,
                     label: "Trio Remote Control",
-                    isEnabled: viewModel.isTrioDevice
+                    isEnabled: true
                 )
 
                 remoteTypeRow(
                     type: .nightscout,
                     label: "Nightscout",
-                    isEnabled: viewModel.isTrioDevice
+                    isEnabled: true
                 )
 
                 Text("Nightscout should be used for Trio 0.2.x.")

@@ -10,9 +10,9 @@ extension MainViewController {
     func DeviceStatusLoop(formatter: ISO8601DateFormatter, lastLoopRecord: [String: AnyObject]) {
         Storage.shared.device.value = "Loop"
 
-        if Storage.shared.remoteType.value == .trc {
-            Storage.shared.remoteType.value = .none
-        }
+//        if Storage.shared.remoteType.value == .trc {
+//            Storage.shared.remoteType.value = .none
+//        }
 
         let previousLastLoopTime = Observable.shared.previousAlertLastLoopTime.value ?? 0
         let lastLoopTime = Observable.shared.alertLastLoopTime.value ?? 0
